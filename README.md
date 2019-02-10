@@ -19,9 +19,13 @@ servicenowClient.getSingleRecord('<TABLE_NAME>',(res)=>{
 ## Supported Actions
 
 ```
-getSingleRecord('<TABLE_NAME>', callback);
-createRecord('<TABLE_NAME>', <JSON_RECORD_BODY>, callback);
-deleteSingleRecord('<TABLE_NAME>', <SYS_ID_OF_RECORD_TO_BE_DELETED>, callback);
-updateSingleRecord('<TABLE_NAME>', <JSON_RECORD_BODY> , <SYS_ID_OF_RECORD_TO_BE_DELETED>, callback);
-getRecords('<TABLE_NAME>', <ENCODED_QUERY>, callback); //Will add query builder.
+getSingleRecord('<TABLE_NAME>', callback); //returns JSON of record
+
+createRecord('<TABLE_NAME>', <JSON_RECORD_BODY>, callback); //returns sys_id of created record
+
+deleteSingleRecord('<TABLE_NAME>', <SYS_ID_OF_RECORD_TO_BE_DELETED>, callback); //returns true if success, false otherwise
+
+updateSingleRecord('<TABLE_NAME>', <JSON_RECORD_BODY> , <SYS_ID_OF_RECORD_TO_BE_DELETED>, callback); //returns sys_id of updated record
+
+getRecords('<TABLE_NAME>', <ENCODED_QUERY>, callback); //Will add query builder. //Returns JSON of list of record(s).
 ```
