@@ -18,35 +18,37 @@ class QueryBuilder{
     }
 
     orderDescending(){
-
+        this.query.push('ORDERBYDESC' + this.currentField);
+        return this;
     }
 
     orderAscending(){
-
+        this.query.push('ORDERBY' + this.currentField);
+        return this;
     }
 
     startsWith(startsWithStr){
-
+        return this._add_condition('STARTSWITH', startsWithStr, ['string']);
     }
 
     endsWith(endsWithStr){
-
+        return this._add_condition('ENDSWITH', endsWithStr, ['string']);;
     }
 
     contains(containesStr){
-
+        return this._add_condition('LIKE', containesStr, ['string']);
     }
 
     doesNotContain(notContainesStr){
-
+        return this._add_condition('NOTLIKE', notContainesStr, ['string']);
     }
 
     isEmpty(){
-
+        return this._add_condition('ISEMPTY', '', ['string', 'number']);
     }
 
     isNotEmpty(){
-
+        return this._add_condition('ISNOTEMPTY', '', ['string', 'number']);
     }
 
     equals(data){
@@ -60,22 +62,28 @@ class QueryBuilder{
     }
 
     not_equals(data){
+        if (typeof data == 'string' || typeof data == 'number'){
+            return this._add_condition('!=', data, ['string', 'number']);
+        } else if (Array.isArray(data)){
+            return this._add_condition('NOT IN', data, ['object']);
+        }
+
+        throw new QueryTypeException('Expected string or list type, not: ' + typeof data);
+    }
+
+    greaterThan(greaterThanValue){
+        
+    }
+
+    greaterThanOrIs(greaterThanOrIsValue){
 
     }
 
-    greaterThan(data){
+    lessThan(lessThanValue){
 
     }
 
-    greaterThanOrIs(data){
-
-    }
-
-    lessThan(data){
-
-    }
-
-    lessThanOrIs(data){
+    lessThanOrIs(lessThanOrIsValue){
 
     }
 
