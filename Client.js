@@ -48,7 +48,7 @@ class Client {
             var requestParams = utils.setRequestParamsWithoutBody(this.headers, 
                                                                 this.auth ,
                                                                 'GET', 
-                                                                utils.URLBuilder(this.instance, this.namespace, this.apiName, table));
+                                                                utils.URLBuilder(this.instance, this.namespace, this.apiName, table) + '?sysparm_query=' + query.build());
             //TODO: Handle query
             request(requestParams, (err, res) => {
                 if (!res || err){
