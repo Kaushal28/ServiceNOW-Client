@@ -1,6 +1,6 @@
 {
   "name": "servicenow-client",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A Javascript client for ServiceNOW REST API.",
   "main": "Client.js",
   "scripts": {
