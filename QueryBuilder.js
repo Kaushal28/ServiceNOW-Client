@@ -128,16 +128,11 @@ class QueryBuilder{
      * @param {String} greaterThanValue 
      */
     greaterThan(greaterThanValue){
-        if (greaterThanValue instanceof Date || greaterThanValue instanceof moment){
-            greaterThanValue = this._getDateTimeInUTC(greaterThanValue);
-        } else if (!(typeof greaterThanValue == 'number' || typeof greaterThanValue == 'string')){
-            throw new QueryTypeException('Expected string/Date/number type, found: ' + typeof greaterThanValue);
-        }
-        return this._addCondition('>', greaterThanValue, ['number', 'string']);
+        return this._addComparisonCondition(greaterThanValue, '>');
     }
 
     greaterThanOrIs(greaterThanOrIsValue){
-
+        return this._addComparisonCondition(greaterThanOrIsValue, '>=');
     }
 
     /**
@@ -146,16 +141,11 @@ class QueryBuilder{
      * @param {String} lessThanValue 
      */
     lessThan(lessThanValue){
-        if (lessThanValue instanceof Date || lessThanValue instanceof moment){
-            lessThanValue = this._getDateTimeInUTC(lessThanValue);
-        } else if (!(typeof lessThanValue == 'number' || typeof lessThanValue == 'string')){
-            throw new QueryTypeException('Expected string/Date/number type, found: ' + typeof lessThanValue);
-        }
-        return this._addCondition('<', lessThanValue, ['number', 'string']);
+        return this._addComparisonCondition(lessThanValue, '<');
     }
 
     lessThanOrIs(lessThanOrIsValue){
-
+        return this._addComparisonCondition(lessThanOrIsValue, '<=');
     }
 
     between(startValue, endValue){
@@ -233,6 +223,8 @@ class QueryBuilder{
 
     /**
      * Builds serviceNOW readable the query.
+     * 
+     * @returns {String} encoded serviceNOW query
      */
     build(){
         if (this.query.length == 0){
@@ -258,8 +250,31 @@ class QueryBuilder{
         return this._formatDateTime(moment(new Date(dateTime.toUTCString().substr(0, 25))));
     }
 
+    /**
+     * Formats serviceNOW readable date
+     * 
+     * @param {moment} momentDate 
+     * 
+     * @returns {String} formatted date string
+     * 
+     */
     _formatDateTime(momentDate){
         return momentDate.format('YYYY-MM-DD hh:mm:ss').toString();
+    }
+
+    /**
+     * Adds comparison conditions {'>', '<', '>=', '<='}
+     * 
+     * @param {String} valueToCompare 
+     * @param {String} operator 
+     */
+    _addComparisonCondition(valueToCompare, operator){
+        if (valueToCompare instanceof Date || valueToCompare instanceof moment){
+            valueToCompare = this._getDateTimeInUTC(valueToCompare);
+        } else if (!(typeof valueToCompare == 'number' || typeof valueToCompare == 'string')){
+            throw new QueryTypeException('Expected string/Date/number type, found: ' + typeof valueToCompare);
+        }
+        return this._addCondition(operator, valueToCompare, ['number', 'string']);
     }
 }
 
