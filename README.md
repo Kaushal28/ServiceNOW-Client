@@ -38,7 +38,7 @@ getRecords('<TABLE_NAME>', '<ENCODED_QUERY>', callback);
 getRecordCount('<TABLE_NAME>', '<ENCODED_QUERY>', callback);
 ```
 
-## Example usage of above example
+## Example Usage of Above Actions
 
 ```
 servicenowClient.getSingleRecord('<TABLE_NAME>', '<SYS_ID>', (res) => {
@@ -72,7 +72,7 @@ servicenowClient.getRecordCount('<TABLE_NAME>', '<ENCODED_QUERY>', (res) => { //
 })
 ```
 
-## Query Builder example usage
+## Query Builder Example Usage
 
 ```
 var queryBuilder = new QueryBuilder();
