@@ -1,7 +1,7 @@
 # ServiceNOW-Client
 A Javascript client for ServiceNOW REST API.
 
-## installation
+## Installation
 
 Run `npm install servicenow-client` to install the package.
 
