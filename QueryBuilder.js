@@ -140,8 +140,18 @@ class QueryBuilder{
 
     }
 
+    /**
+     * Adds new '<' condition
+     * 
+     * @param {String} lessThanValue 
+     */
     lessThan(lessThanValue){
-
+        if (lessThanValue instanceof Date || lessThanValue instanceof moment){
+            lessThanValue = this._getDateTimeInUTC(lessThanValue);
+        } else if (!(typeof lessThanValue == 'number' || typeof lessThanValue == 'string')){
+            throw new QueryTypeException('Expected string/Date/number type, found: ' + typeof lessThanValue);
+        }
+        return this._addCondition('<', lessThanValue, ['number', 'string']);
     }
 
     lessThanOrIs(lessThanOrIsValue){
