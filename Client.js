@@ -44,12 +44,16 @@ class Client {
      * @throws snowRESTException
      */
     getRecords(table, query, callback){
+        if(query instanceof require('./QueryBuilder')){
+            query = utils.URLBuilder(this.instance, this.namespace, this.apiName, table) + '?sysparm_query=' + query.build();
+        } else {
+            query = utils.URLBuilder(this.instance, this.namespace, this.apiName, table);
+        }
         new Promise((resolve, reject) => {
             var requestParams = utils.setRequestParamsWithoutBody(this.headers, 
                                                                 this.auth ,
                                                                 'GET', 
-                                                                utils.URLBuilder(this.instance, this.namespace, this.apiName, table) + '?sysparm_query=' + query.build());
-            //TODO: Handle query
+                                                                query);
             request(requestParams, (err, res) => {
                 if (!res || err){
                     return reject('Error While fetching records from ' + this.instance + '. Error: ' + err.toString());

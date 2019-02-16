@@ -3,6 +3,7 @@
 var QueryMissingFieldException = require('./Exceptions/QueryMissingFieldException');
 var QueryTypeException = require('./Exceptions/QueryTypeException');
 var QueryEmptyException = require('./Exceptions/QueryEmptyException');
+var moment = require('moment');
 
 /**
  * QueryBuilder: For constructing advanced serviceNOW queries
@@ -127,7 +128,7 @@ class QueryBuilder{
      * @param {String} greaterThanValue 
      */
     greaterThan(greaterThanValue){
-        if (greaterThanValue instanceof Date){
+        if (greaterThanValue instanceof Date || greaterThanValue instanceof moment){
             greaterThanValue = this._getDateTimeInUTC(greaterThanValue);
         } else if (!(typeof greaterThanValue == 'number' || typeof greaterThanValue == 'string')){
             throw new QueryTypeException('Expected string/Date/number type, found: ' + typeof greaterThanValue);
@@ -230,8 +231,25 @@ class QueryBuilder{
         return this.query.join('');
     }
 
+    /**
+     * Converts date/moment object to UTC and formats to ServiceNOW readable date string.
+     * Also supports moment date objects
+     * 
+     * @param {Object} dateTime 
+     * 
+     * @returns {String} formatted Date-Time String
+     * 
+     */
     _getDateTimeInUTC(dateTime){
+        //Support of Moment Date object
+        if (dateTime instanceof moment){
+            return this._formatDateTime(dateTime);
+        }
+        return this._formatDateTime(moment(new Date(dateTime.toUTCString().substr(0, 25))));
+    }
 
+    _formatDateTime(momentDate){
+        return momentDate.format('YYYY-MM-DD hh:mm:ss').toString();
     }
 }
 
