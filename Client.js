@@ -38,6 +38,7 @@ class Client {
      * 
      * @param {String} table 
      * @param {String} query 
+     * @param {Object} callback
      * 
      * @returns {Object} 
      * 
@@ -68,6 +69,53 @@ class Client {
         })
         .catch((error) => {
             callback(error);
+        });
+    }
+
+    /**
+     * 
+     * @param {String} table
+     * @param {String} query 
+     * @param {Object} callback 
+     * 
+     * @returns {number} Count of records for given query and given table
+     */
+    getRecordCount(table, query, callback){
+
+        let reqFormat = 'application/json', respFormat = 'application/json';
+        //Change current request/response format to JSON if other format is being used
+        if (!(this.requestFormat == 'application/json' && this.responseFormat == 'application/json')){
+            reqFormat = this.requestFormat;
+            respFormat = this.responseFormat;
+        }
+
+        if(query instanceof require('./QueryBuilder')){
+            query = utils.URLBuilder(this.instance, this.namespace, this.apiName, table) + '?sysparm_query=' + query.build() + 'sysparm_fields=sys_created_on';
+        } else {
+            query = utils.URLBuilder(this.instance, this.namespace, this.apiName, table) + 'sysparm_fields=sys_created_on';
+        }
+        new Promise((resolve, reject) => {
+            var requestParams = utils.setRequestParamsWithoutBody(this.headers, 
+                                                                this.auth ,
+                                                                'GET', 
+                                                                query);
+            request(requestParams, (err, res) => {
+                if (!res || err){
+                    return reject('Error While fetching records from ' + this.instance + '. Error: ' + err.toString());
+                }
+                if (res.statusCode >= 400){
+                    return reject('Error While fetching records from ' + this.instance + '. Error: ' + res.body);
+                }
+                resolve(JSON.parse(res.body).result.length);
+            });
+        }).then((response) => {
+            callback(response);
+        })
+        .catch((error) => {
+            callback(error);
+        }).then(() => {
+            this.requestFormat = reqFormat;
+            this.responseFormat = respFormat;
         });
     }
 
