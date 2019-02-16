@@ -131,6 +131,11 @@ class QueryBuilder{
         return this._addComparisonCondition(greaterThanValue, '>');
     }
 
+    /**
+     * Adds new '>=' condition
+     * 
+     * @param {String} greaterThanOrIsValue 
+     */
     greaterThanOrIs(greaterThanOrIsValue){
         return this._addComparisonCondition(greaterThanOrIsValue, '>=');
     }
@@ -144,12 +149,36 @@ class QueryBuilder{
         return this._addComparisonCondition(lessThanValue, '<');
     }
 
+    /**
+     * Adds new '<=' condition
+     * 
+     * @param {String} lessThanOrIsValue 
+     */
     lessThanOrIs(lessThanOrIsValue){
         return this._addComparisonCondition(lessThanOrIsValue, '<=');
     }
 
+    /**
+     * Adds new 'BETWEEN' condition
+     * 
+     * @param {String} startValue 
+     * @param {String} endValue 
+     */
     between(startValue, endValue){
+        var betweenOperand = '';
+        if ((typeof startValue == 'number' && typeof endValue == 'number') 
+                        || (typeof startValue == 'string' && typeof endValue == 'string')){
 
+            betweenOperand = `${startValue}@${endValue}`;
+        } else if ((startValue instanceof Date || startValue instanceof moment)
+                        && (endValue instanceof Date || endValue instanceof moment)){
+
+            betweenOperand = `${this._getDateTimeInUTC(startValue)}@${this._getDateTimeInUTC(endValue)}`;
+        } else {
+            throw new QueryTypeException('Expected string/date/number type, found: ' + typeof data);
+        }
+        
+        return this._addCondition('BETWEEN', betweenOperand, ['string']);
     }
 
     isAnything(str){
