@@ -181,16 +181,30 @@ class QueryBuilder{
         return this._addCondition('BETWEEN', betweenOperand, ['string']);
     }
 
-    isAnything(str){
-
+    /**
+     * Adds new 'ANYTHING' condition
+     */
+    isAnything(){
+        return this._addCondition('ANYTHING', '', ['string', 'number']);
     }
 
+    /**
+     * Adds new 'IN' condition
+     * 
+     * @param {Object} data Array to be searched 
+     */
     isOneOf(data){
-
+        if (Array.isArray(data)){
+            return this._addCondition('IN', data.join(','), ['string']);
+        }
+        throw new QueryTypeException('Expected array type, found: ' + typeof data);
     }
 
+    /**
+     * Adds new 'EMPTYSTRING' condition
+     */
     isEmptyString(){
-
+        return this._addCondition('EMPTYSTRING', '', ['string']);
     }
 
     /**
@@ -235,7 +249,7 @@ class QueryBuilder{
         if (!this.currentField){
             throw new QueryMissingFieldException('Conditions requires a field.');
         }
-
+        
         if (!types.includes(typeof operand)){
             var errorMessage = '';
             if (types.length > 1){
