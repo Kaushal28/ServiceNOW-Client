@@ -47,7 +47,7 @@ class QueryBuilder{
      * @param {String} startsWithStr 
      */
     startsWith(startsWithStr){
-        return this._add_condition('STARTSWITH', startsWithStr, ['string']);
+        return this._addCondition('STARTSWITH', startsWithStr, ['string']);
     }
 
     /**
@@ -56,7 +56,7 @@ class QueryBuilder{
      * @param {String} endsWithStr 
      */
     endsWith(endsWithStr){
-        return this._add_condition('ENDSWITH', endsWithStr, ['string']);;
+        return this._addCondition('ENDSWITH', endsWithStr, ['string']);;
     }
 
     /**
@@ -65,7 +65,7 @@ class QueryBuilder{
      * @param {String} containesStr 
      */
     contains(containesStr){
-        return this._add_condition('LIKE', containesStr, ['string']);
+        return this._addCondition('LIKE', containesStr, ['string']);
     }
 
     /**
@@ -74,21 +74,21 @@ class QueryBuilder{
      * @param {String} notContainesStr 
      */
     doesNotContain(notContainesStr){
-        return this._add_condition('NOTLIKE', notContainesStr, ['string']);
+        return this._addCondition('NOTLIKE', notContainesStr, ['string']);
     }
 
     /**
      * Adds new ISEMPTY condition
      */
     isEmpty(){
-        return this._add_condition('ISEMPTY', '', ['string', 'number']);
+        return this._addCondition('ISEMPTY', '', ['string', 'number']);
     }
 
     /**
      * Adds new ISNOTEMPTY condition
      */
     isNotEmpty(){
-        return this._add_condition('ISNOTEMPTY', '', ['string', 'number']);
+        return this._addCondition('ISNOTEMPTY', '', ['string', 'number']);
     }
 
     /**
@@ -98,12 +98,12 @@ class QueryBuilder{
      */
     equals(data){
         if (typeof data == 'string' || typeof data == 'number'){
-            return this._add_condition('=', data, ['string', 'number']);
+            return this._addCondition('=', data, ['string', 'number']);
         } else if (Array.isArray(data)){
-            return this._add_condition('IN', data, ['object']);
+            return this._addCondition('IN', data, ['object']);
         }
 
-        throw new QueryTypeException('Expected string or list type, not: ' + typeof data);
+        throw new QueryTypeException('Expected string or list type, found: ' + typeof data);
     }
 
     /**
@@ -111,18 +111,28 @@ class QueryBuilder{
      * 
      * @param {String} data 
      */
-    not_equals(data){
+    notEquals(data){
         if (typeof data == 'string' || typeof data == 'number'){
-            return this._add_condition('!=', data, ['string', 'number']);
+            return this._addCondition('!=', data, ['string', 'number']);
         } else if (Array.isArray(data)){
-            return this._add_condition('NOT IN', data, ['object']);
+            return this._addCondition('NOT IN', data, ['object']);
         }
 
-        throw new QueryTypeException('Expected string or list type, not: ' + typeof data);
+        throw new QueryTypeException('Expected string or list type, found: ' + typeof data);
     }
 
+    /**
+     * Adds new '>' condition
+     * 
+     * @param {String} greaterThanValue 
+     */
     greaterThan(greaterThanValue){
-
+        if (greaterThanValue instanceof Date){
+            greaterThanValue = this._getDateTimeInUTC(greaterThanValue);
+        } else if (!(typeof greaterThanValue == 'number' || typeof greaterThanValue == 'string')){
+            throw new QueryTypeException('Expected string/Date/number type, found: ' + typeof greaterThanValue);
+        }
+        return this._addCondition('>', greaterThanValue, ['number', 'string']);
     }
 
     greaterThanOrIs(greaterThanOrIsValue){
@@ -157,21 +167,21 @@ class QueryBuilder{
      * Adds AND operator
      */
     and(){
-        return this._add_logical_operator('^');
+        return this._addLogicalOperator('^');
     }
 
     /**
      * Addds OR operator
      */
     or(){
-        return this._add_logical_operator('^OR');
+        return this._addLogicalOperator('^OR');
     }
 
     /**
      * Adds new NQ operator
      */
     NQ(){
-        return this._add_logical_operator('^NQ');
+        return this._addLogicalOperator('^NQ');
     }
 
     /**
@@ -179,7 +189,7 @@ class QueryBuilder{
      * 
      * @param {String} operator 
      */
-    _add_logical_operator(operator){
+    _addLogicalOperator(operator){
         this.query.push(operator);
         return this;
     }
@@ -191,7 +201,7 @@ class QueryBuilder{
      * @param {String} operand 
      * @param {List} types 
      */
-    _add_condition(operator, operand, types){
+    _addCondition(operator, operand, types){
         if (!this.currentField){
             throw new QueryMissingFieldException('Conditions requires a field.');
         }
@@ -218,6 +228,10 @@ class QueryBuilder{
             throw new QueryEmptyException('Atleast one condition is required in query.');
         }
         return this.query.join('');
+    }
+
+    _getDateTimeInUTC(dateTime){
+
     }
 }
 

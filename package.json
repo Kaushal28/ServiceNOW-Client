@@ -9,6 +9,7 @@
   "author": "kaushal28",
   "license": "ISC",
   "dependencies": {
+    "moment": "^2.24.0",
     "request": "^2.88.0"
   },
   "keywords": [
