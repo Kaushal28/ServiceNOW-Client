@@ -80,10 +80,10 @@ var queryBuilder = new QueryBuilder();
 //Less than '<'
 var query = queryBuilder.field('sys_created_on').lessThan('2019-02-15 14:30:18');
 
-//Less thank using Date object
+//Less than using Date object
 var query = queryBuilder.field('sys_created_on').lessThan(moment(new Date()).subtract(1, 'days').toDate());
 
-//Greater thank using Moment object
+//Greater than using Moment object
 var query = queryBuilder.field('sys_created_on').lessThan(moment(new Date()).subtract(1, 'days'));
 
 
