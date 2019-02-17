@@ -4,12 +4,15 @@
   "description": "A Javascript client for ServiceNOW REST API.",
   "main": "Client.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "kaushal28",
   "license": "ISC",
   "dependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
     "moment": "^2.24.0",
+    "nock": "^10.0.6",
     "request": "^2.88.0"
   },
   "keywords": [
