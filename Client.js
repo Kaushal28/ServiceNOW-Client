@@ -56,11 +56,9 @@ class Client {
                                                                 'GET', 
                                                                 query);
             request(requestParams, (err, res) => {
-                if (!res || err){
-                    return reject('Error While fetching records from ' + this.instance + '. Error: ' + err.toString());
-                }
-                if (res.statusCode >= 400){
-                    return reject('Error While fetching records from ' + this.instance + '. Error: ' + res.body);
+                var errorMessage = this._handleErrors(res, err);
+                if (errorMessage){
+                    return reject(errorMessage);
                 }
                 resolve(res.body);
             });
@@ -100,11 +98,9 @@ class Client {
                                                                 'GET', 
                                                                 query);
             request(requestParams, (err, res) => {
-                if (!res || err){
-                    return reject('Error While fetching records from ' + this.instance + '. Error: ' + err.toString());
-                }
-                if (res.statusCode >= 400){
-                    return reject('Error While fetching records from ' + this.instance + '. Error: ' + res.body);
+                var errorMessage = this._handleErrors(res, err);
+                if (errorMessage){
+                    return reject(errorMessage);
                 }
                 resolve(JSON.parse(res.body).result.length);
             });
@@ -137,13 +133,10 @@ class Client {
                                                                 utils.URLBuilder(this.instance, this.namespace, this.apiName, table));
 
             request(requestParams, (err, res) => {
-                if (!res || err) {
-                    return reject('Error While creating records on ' + this.instance + '. Error: ' + err.toString());
-                }
-                if (res.statusCode >= 400){
-                    return reject('Error While creating record on' + this.instance + '. Error: ' + res.body);
-                }
-                if (res.statusCode == 201){
+                var errorMessage = this._handleErrors(res, err);
+                if (errorMessage){
+                    return reject(errorMessage);
+                } else if (res.statusCode == 201){
                     resolve(JSON.parse(res.body).result.sys_id);
                 }
                 return reject('Error While creating record on' + this.instance + '. Error: ' + res.body);
@@ -172,11 +165,9 @@ class Client {
                                                                     utils.URLBuilder(this.instance, this.namespace, this.apiName, table, sysId));
 
             request(requestParams, (err, res) => {
-                if (!res || err){
-                    return reject('Error While fetching single record from ' + this.instance + '. Error: ' + err.toString());
-                }
-                if (res.statusCode >= 400){
-                    return reject('Error While fetching single record from ' + this.instance + '. Error: ' + res.body);
+                var errorMessage = this._handleErrors(res, err);
+                if (errorMessage){
+                    return reject(errorMessage);
                 }
                 resolve(res.body);
             });
@@ -207,13 +198,10 @@ class Client {
                                                                 utils.URLBuilder(this.instance, this.namespace, this.apiName, table, sysId));
 
             request(requestParams, (err, res) => {
-                if (!res || err){
-                    return reject('Error While updating single record on ' + this.instance + '. Error: ' + err.toString());
-                }
-                if (res.statusCode >= 400){
-                    return reject('Error While updating single record on ' + this.instance + '. Error: ' + res.body);
-                }
-                if (res.statusCode == 200){
+                var errorMessage = this._handleErrors(res, err);
+                if (errorMessage){
+                    return reject(errorMessage);
+                } else if (res.statusCode == 200){
                     resolve(JSON.parse(res.body).result.sys_id);
                 }
                 return reject('Error While updating single record on ' + this.instance + '. Error: ' + res.body);
@@ -243,14 +231,11 @@ class Client {
                                                                     utils.URLBuilder(this.instance, this.namespace, this.apiName, table, sysId));
                 
             request(requestParams, (err, res) => {
-                if (!res || err){
-                    return reject('Error While deleting single record from ' + this.instance + '. Error: ' + err.toString());
-                }
-                if (res.statusCode >= 400){
-                    return reject('Error While deleting single record from ' + this.instance + '. Error: ' + res.body);
-                }
 
-                if (res.statusCode == 204){
+                var errorMessage = this._handleErrors(res, err);
+                if (errorMessage){
+                    return reject(errorMessage);
+                } else if (res.statusCode == 204){
                     resolve(true);
                 }
                 return reject(false);
@@ -260,6 +245,23 @@ class Client {
         }).catch((error) => {
             callback(error);
         });
+    }
+
+    /**
+     * Returns error message in case of error, empty string otherwise
+     * 
+     * @param {Object} res 
+     * @param {Object} err 
+     */
+    _handleErrors(res, err){
+        if (err){
+            return 'Error While performing specified operation on ' + this.instance + '. Error: ' + err.toString();
+        } else if (!res.body){
+            return 'Error While performing specified operation on ' + this.instance + '. Retrieved empty response';
+        } else if (res.statusCode >= 400){
+            return 'Error While performing specified operation on ' + this.instance + '. Error: ' + res.body;
+        }
+        return '';
     }
 }
 
