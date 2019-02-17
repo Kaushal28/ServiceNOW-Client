@@ -14,7 +14,7 @@ class Client {
      * @param {String} apiName
      * @param {String} namespace
      */
-    constructor(instance, username, password,  apiName = 'table', namespace='now', requestFormat='application/json', responseFormat='application/json'){
+    constructor(instance, username, password, requestFormat='application/json', responseFormat='application/json', apiName = 'table', namespace='now'){
         this.instance = instance;
         this.username = username;
         this.password = password;
