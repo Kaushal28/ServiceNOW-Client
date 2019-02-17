@@ -16,6 +16,25 @@ servicenowClient.getSingleRecord('<TABLE_NAME>', <SYS_ID>, (res)=>{
     console.log(res);
 });
 ```
+
+### Following request/response formats are supported:
+- application/json (default)
+- application/xml 
+- text/xml
+
+### To change the default format: 
+
+```
+const servicenowClient = require('servicenow-client');
+
+servicenowClient = new servicenowClient('https://<INSTANCE>.service-now.com','<USERNAME>','<PASSWORD>', 'application/xml', 'application/xml');
+
+servicenowClient.getSingleRecord('<TABLE_NAME>', <SYS_ID>, (res)=>{
+    //Handle XML response
+    console.log(res);
+});
+```
+
 ## Supported Actions
 
 ```
